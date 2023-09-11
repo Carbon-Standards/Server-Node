@@ -3,13 +3,11 @@ import { WebSocketServer } from "ws";
 
 export type PSocketServerOptions = {
   prefix?: `/${string}/` | "/";
-  maintainer?: {
-    email: string;
-    website: string;
-  };
-  requestTimeout?: number;
-  maxBodySize?: number;
-  maxPacketSize?: number;
+  maintainer?: PSocketMeta["maintainer"];
+  requestTimeout?: PSocketMeta["requestTimeout"];
+  maxBodySize?: PSocketMeta["maxBodySize"];
+  maxMessageSize?: PSocketMeta["maxMessageSize"];
+  maxPacketSize?: PSocketMeta["maxPacketSize"];
   server?: Server;
   wss?: WebSocketServer;
 };
@@ -17,16 +15,20 @@ export type PSocketServerOptions = {
 export type PSocketMeta = {
   /**
    * Versions that are provided by the given PSocket server.
-   */
+   * */
   versions: number[];
   /**
    * The request timeout value set by the server, this value should be identical between client and server pairs.
-   */
+   * */
   requestTimeout: number;
   /**
    * The maximum body size in bytes allowed by the server. If either request or response body exceeds this limit, the server will respond with an error.
    */
   maxBodySize: number;
+  /**
+   * The maximum websocket message size in bytes allowed for remote connections. If any message exceeds this limit, the server will respond with an error.
+   */
+  maxMessageSize: number;
   /**
    * The maximum packet size in bytes allowed by the server. If any packet exceeds this limit, the server will respond with an error.
    */
@@ -35,7 +37,7 @@ export type PSocketMeta = {
    * Contact information about the maintainer of the given PSocket server.
    *
    * Can be used to contact maintainers about security vulnerabilities.
-   */
+   * */
   maintainer?: {
     email: string;
     website: string;
@@ -66,9 +68,9 @@ export type PSocketRequest = {
   /**
    * This value is used by the server to determine what kind of action is being completed.
    *
-   * This value may be one of three different values for requests and responses.
+   * This value may be one of four different values for requests and responses.
    *
-   * `"request" | "response" | "error"`
+   * `"request" | "response" | "message" | "error"`
    */
   type: "request";
   /**
@@ -106,6 +108,10 @@ export type PSocketResponse = {
   id: string;
   /**
    * This value is used by the client to determine what kind of action is being completed.
+   *
+   * This value may be one of four different values for requests and responses.
+   *
+   * `"request" | "response" | "message" | "error"`
    */
   type: "response";
   /**
@@ -128,4 +134,31 @@ export type PSocketResponse = {
    * If set, the client will wait for the full body to be recieved before finalizing any requests.
    */
   body?: number;
+};
+
+export type PSocketMessage = {
+  /**
+   * The 32 character HEX string identifying the response.
+   *
+   * This id represents which `PSocketRequest` the given response corelates to.
+   */
+  id: string;
+  /**
+   * This value is used by the client and server to determine what kind of action is being completed.
+   *
+   * This value may be one of four different values for requests and responses.
+   *
+   * `"request" | "response" | "message" | "error"`
+   */
+  type: "message";
+  /**
+   * An integer value representing the size of the message in bytes.
+   *
+   * The client/server will wait for the full message to be recieved before forwarding the message.
+   */
+  data: number;
+  /**
+   * The data type of the message.
+   */
+  dataType: "text" | "binary";
 };

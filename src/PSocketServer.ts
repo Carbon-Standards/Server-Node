@@ -3,7 +3,7 @@ import { METHOD_NOT_ALLOWED, NOT_FOUND } from "./errors";
 import { json } from "./responseUtil";
 import { PSocketMeta, PSocketServerOptions } from "./types/PSocket";
 import * as v1 from "./v1";
-import http, { IncomingMessage, ServerResponse } from "node:http";
+import http, { IncomingMessage, ServerResponse, Server } from "node:http";
 import { Duplex } from "node:stream";
 import { WebSocketServer } from "ws";
 
@@ -13,24 +13,24 @@ const versions = {
 
 export class PSocketServer {
   wss: WebSocketServer;
-  server: http.Server;
+  server: Server;
   meta: PSocketMeta;
   prefix: string;
   VERSION_REGEX: RegExp;
 
-  constructor(options: PSocketServerOptions) {
-    this.prefix = options.prefix ?? "/";
+  constructor(options?: PSocketServerOptions) {
+    this.prefix = options?.prefix ?? "/";
     this.VERSION_REGEX = new RegExp(
       `^${this.prefix}(?<version>${Object.keys(versions).join("|")})/?$`
     );
 
-    if (options.wss) {
+    if (options?.wss) {
       this.wss = options.wss;
     } else {
       this.wss = new WebSocketServer({ noServer: true });
     }
 
-    if (options.server) {
+    if (options?.server) {
       this.server = options.server;
     } else {
       this.server = http.createServer();
@@ -38,10 +38,11 @@ export class PSocketServer {
 
     this.meta = {
       versions: [1],
-      requestTimeout: options.requestTimeout ?? 30000,
-      maxBodySize: options.maxBodySize ?? 68718297088,
-      maxPacketSize: options.maxPacketSize ?? 1048558,
-      maintainer: options.maintainer,
+      requestTimeout: options?.requestTimeout ?? 30000,
+      maxBodySize: options?.maxBodySize ?? 68718297088,
+      maxMessageSize: options?.maxMessageSize ?? 1048558,
+      maxPacketSize: options?.maxPacketSize ?? 1048558,
+      maintainer: options?.maintainer,
       project: {
         name: pkg.name,
         description: pkg.description,
@@ -95,8 +96,8 @@ export class PSocketServer {
         this.server.listen(port, host, () => {
           resolve();
         });
-      } catch {
-        reject();
+      } catch (e) {
+        reject(e);
       }
     });
   }

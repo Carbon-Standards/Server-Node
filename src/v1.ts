@@ -1,5 +1,13 @@
 import { PSocketServer } from "./PSocketServer";
-import { BODY_TOO_LARGE, INVALID_FORMAT, INVALID_HEADERS, INVALID_ID, INVALID_METHOD, INVALID_TYPE, INVALID_URL } from "./errors";
+import {
+  BODY_TOO_LARGE,
+  INVALID_FORMAT,
+  INVALID_HEADERS,
+  INVALID_ID,
+  INVALID_METHOD,
+  INVALID_TYPE,
+  INVALID_URL
+} from "./errors";
 import { PSocketRequest } from "./types/PSocket";
 import { WebSocket } from "ws";
 
