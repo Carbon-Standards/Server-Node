@@ -1,0 +1,25 @@
+{
+  "name": "psocket-server-node",
+  "version": "0.0.1",
+  "description": "PSocket server implemented in NodeJS.",
+  "main": "dist/index.js",
+  "type": "module",
+  "scripts": {
+    "dev": "tsx watch ./examples/basic.ts"
+  },
+  "repository": "https://github.com/ProxySocket/Server-Node",
+  "author": "Cohen Erickson",
+  "license": "MIT",
+  "dependencies": {
+    "ws": "^8.13.0"
+  },
+  "devDependencies": {
+    "@trivago/prettier-plugin-sort-imports": "^4.2.0",
+    "@types/node": "^20.5.9",
+    "@types/ws": "^8.5.5",
+    "esbuild": "^0.19.2",
+    "prettier": "^3.0.3",
+    "tsx": "^3.12.8",
+    "typescript": "^5.2.2"
+  }
+}
