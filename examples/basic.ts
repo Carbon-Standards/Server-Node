@@ -1,4 +1,4 @@
-import { PSocketServer } from "@proxysocket/server-node";
+import { PSocketServer } from "@psocket/server-node";
 
 const server = new PSocketServer();
 

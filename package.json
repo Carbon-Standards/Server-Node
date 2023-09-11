@@ -1,5 +1,5 @@
 {
-  "name": "@proxysocket/server-node",
+  "name": "@psocket/server-node",
   "version": "0.0.1-beta",
   "description": "PSocket server implemented in NodeJS.",
   "main": "dist/src/index.js",
