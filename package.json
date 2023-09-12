@@ -1,16 +1,19 @@
 {
   "name": "@psocket/server-node",
-  "version": "0.0.1-beta",
+  "version": "0.0.1-beta.1",
   "description": "PSocket server implemented in NodeJS.",
   "main": "dist/src/index.js",
   "types": "dist/src/index.d.ts",
   "type": "module",
   "scripts": {
     "build": "tsc",
-    "dev": "tsx watch ./examples/basic.ts",
+    "dev": "tsx watch ./examples/_dev.ts",
     "pretty": "prettier --write ."
   },
-  "repository": "https://github.com/ProxySocket/Server-Node",
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/P-Socket/Server-Node.git"
+  },
   "author": "Cohen Erickson",
   "license": "MIT",
   "dependencies": {

@@ -46,7 +46,7 @@ export class PSocketServer {
       project: {
         name: pkg.name,
         description: pkg.description,
-        repository: pkg.repository,
+        repository: pkg.repository.url,
         version: pkg.version
       }
     };
