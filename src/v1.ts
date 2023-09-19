@@ -10,7 +10,14 @@ import {
   INVALID_URL,
   REQUEST_NOT_FOUND
 } from "./errors";
-import { PSocketRequest, PSocketResponse } from "./types/PSocket";
+import {
+  PSocketClose,
+  PSocketMessage,
+  PSocketOpen,
+  PSocketPacket,
+  PSocketRequest,
+  PSocketResponse
+} from "./types/PSocket";
 import { WebSocket } from "ws";
 
 const META_BYTES = 18;
@@ -41,6 +48,7 @@ async function requestResource(
     type: "response",
     url: response.url,
     status: response.status,
+    statusText: response.statusText,
     headers: Object.fromEntries(response.headers.entries())
   };
 
@@ -83,10 +91,9 @@ async function requestResource(
 
 export function connect(self: PSocketServer, client: WebSocket) {
   client.on("message", (data: Buffer, isBinary: boolean) => {
-    console.log(data.toString());
     if (!isBinary) {
       try {
-        const request = JSON.parse(data.toString("utf-8")) as PSocketRequest;
+        const request = JSON.parse(data.toString("utf-8")) as PSocketPacket;
 
         if (!/^[0-9a-f]{32}$/.test(request.id)) {
           client.send(formatError(INVALID_ID, request.id), { binary: false });
@@ -131,6 +138,7 @@ export function connect(self: PSocketServer, client: WebSocket) {
             if (typeof request.body === "undefined") {
               requestResource(self, client, request);
             } else {
+              // Add requset to body queue
               const timeout = setTimeout(() => {
                 client.send(formatError(BODY_TIMEOUT, request.id), {
                   binary: false
@@ -145,6 +153,68 @@ export function connect(self: PSocketServer, client: WebSocket) {
               });
             }
 
+            break;
+          case "connect":
+            if (!isURL(request.url)) {
+              client.send(formatError(INVALID_URL, request.id), {
+                binary: false
+              });
+              return;
+            }
+
+            if (!isHeaders(request.headers)) {
+              client.send(formatError(INVALID_HEADERS, request.id), {
+                binary: false
+              });
+              return;
+            }
+
+            const remote = new WebSocket(request.url, request.protocols, {
+              headers: request.headers
+            });
+
+            remote.on("upgrade", (response: Response) => {
+              remote.on("open", () => {
+                const pOpen: PSocketOpen = {
+                  id: request.id,
+                  type: "open",
+                  url: response.url,
+                  protocol:
+                    response.headers.get("sec-websocket-protocol") ?? "",
+                  headers: Object.fromEntries(response.headers.entries())
+                };
+
+                client.send(JSON.stringify(pOpen), { binary: false });
+              });
+
+              remote.on("close", (code: number, reason: string) => {
+                const pClose: PSocketClose = {
+                  id: request.id,
+                  type: "close",
+                  code,
+                  reason
+                };
+
+                client.send(JSON.stringify(pClose), { binary: false });
+              });
+
+              remote.on("message", (data: Buffer, isBinary: boolean) => {
+                const pMessage: PSocketMessage = {
+                  id: request.id,
+                  type: "message",
+                  data: data.length,
+                  dataType: isBinary ? "binary" : "text"
+                };
+
+                client.send(JSON.stringify(pMessage), { binary: false });
+
+                // TODO: forward websocket message
+              });
+            });
+
+            break;
+          case "message":
+            // TODO: WebSockets
             break;
           default:
             client.send(formatError(INVALID_TYPE, request.id), {
