@@ -1,13 +1,12 @@
 {
-  "name": "@psocket/server-node",
+  "name": "@carbon-standards/server-node",
   "version": "0.0.1-beta.1",
-  "description": "PSocket server implemented in NodeJS.",
+  "description": "Carbon server implemented in NodeJS.",
   "main": "dist/src/index.js",
   "types": "dist/src/index.d.ts",
   "type": "module",
   "scripts": {
-    "build": "tsc",
-    "dev": "tsx watch ./examples/_dev.ts",
+    "dev": "tsx examples/basic.ts",
     "pretty": "prettier --write ."
   },
   "repository": {
@@ -17,15 +16,16 @@
   "author": "Cohen Erickson",
   "license": "MIT",
   "dependencies": {
-    "ws": "^8.13.0"
+    "ws": "^8.16.0"
   },
   "devDependencies": {
-    "@trivago/prettier-plugin-sort-imports": "^4.2.0",
-    "@types/node": "^20.5.9",
-    "@types/ws": "^8.5.5",
-    "esbuild": "^0.19.2",
-    "prettier": "^3.0.3",
-    "tsx": "^3.12.8",
-    "typescript": "^5.2.2"
+    "@carbon-standards/types": "0.0.1-beta.1",
+    "@trivago/prettier-plugin-sort-imports": "^4.3.0",
+    "@types/node": "^20.10.6",
+    "@types/ws": "^8.5.10",
+    "esbuild": "^0.19.11",
+    "prettier": "^3.1.1",
+    "tsx": "^4.7.0",
+    "typescript": "^5.3.3"
   }
 }

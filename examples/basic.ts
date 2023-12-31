@@ -1,5 +1,5 @@
-import { PSocketServer } from "@psocket/server-node";
+import { CarbonServer } from "../src";
 
-const server = new PSocketServer();
+const server = new CarbonServer({});
 
-await server.listen(8080);
+server.http.listen(8080);

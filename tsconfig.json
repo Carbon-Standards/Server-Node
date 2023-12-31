@@ -1,16 +1,13 @@
 {
   "compilerOptions": {
-    "resolveJsonModule": true,
-    "target": "esnext",
-    "module": "esnext",
-    "moduleResolution": "node",
-    "stripInternal": true,
+    "target": "ESNext",
+    "module": "ESNext",
+    "skipLibCheck": true,
+    "moduleResolution": "bundler",
     "esModuleInterop": true,
-    "declaration": true,
-    "sourceMap": true,
+    "noEmit": true,
     "strict": true,
-    "types": ["node"],
-    "outDir": "dist"
+    "types": ["node"]
   },
   "include": ["src"]
 }
